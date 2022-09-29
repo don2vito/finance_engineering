@@ -1,6 +1,7 @@
 import pandas as pd
 from struct import unpack
 import os
+from pytdx.reader import TdxDailyBarReader,TdxFileNotFoundException
 import akshare as ak
 import baostock as bs
 from opendatatools import stock
@@ -42,6 +43,16 @@ def TDX2df(file_name):
     df.to_excel('./TDX_day.xlsx',index=False)
     print('成功导出 Excel 文件!')
 
+
+# 将 pytdx 日线数据转换为 dataframe
+# 注意，导出的数据未复权！
+def pytdx2df(file_name):
+    reader = TdxDailyBarReader()
+    pytdx_df = reader.get_df(file_name)
+    pytdx_df = pytdx_df.loc['20120301':'20120315']
+    print(f'将 pytdx 日线数据转换为 dataframe:\n{pytdx_df}')
+    pytdx_df.to_excel('./pytdx_day.xlsx',index=False)
+    print('成功导出 Excel 文件!')
 
 # 将 akshare 日线数据转换为 dataframe
 def akshare2df():
@@ -160,6 +171,7 @@ def opendatatools2df():
 def main():
     file_name = './sh600006.day'
     TDX2df(file_name)
+    pytdx2df(file_name)
     akshare2df()
     baostock2df()
     opendatatools2df()
